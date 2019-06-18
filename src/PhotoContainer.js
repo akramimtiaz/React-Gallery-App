@@ -1,25 +1,23 @@
 import React from 'react'
 import Photo from './Photo'
-import NotFound from './NotFound'
+import NoResult from './NoResult'
 
-const PhotoContainer = ({data}) => {
+const PhotoContainer = ({data, title}) => {
 
-    let Photos = data.map(image => 
-        <Photo key={image.id} {...image}/>
-    )
+    let Photos
+    if(data.length > 0){
+        Photos = data.map(image => 
+            <Photo key={image.id} {...image}/>
+        )
+    }else{
+        Photos = <NoResult/>
+    }
 
     return (
         <div className="photo-container">
-            {
-                data.length === 0 ? 
-                <NotFound/>
-                :
-                <React.Fragment>
-                    <h2>Results</h2>
-                    <ul>{Photos}</ul>
-                </React.Fragment>
-            }
-      </div>
+            <h3>{`${title} Images`}</h3>
+            <ul>{ Photos }</ul>
+        </div>
     )
 }
 

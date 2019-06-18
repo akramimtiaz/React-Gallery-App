@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import axios from 'axios'
 
-import apiKey from './config.js'
+import API_KEY from './config.js'
 
 import Search from './Search'
 import Nav from './Nav'
 import PhotoContainer from './PhotoContainer'
+import NotFound from './NotFound'
 
 class App extends Component {
 
@@ -14,37 +15,54 @@ class App extends Component {
     super()
     this.state = {
       loaded: false,
-      query: "",
-      imageData: []
+      query: '',
+      searchImages: [],
+      skyImages: [],
+      japanImages: [],
+      mountainImages: []
     }
   }
 
   componentDidMount() {
-   this.performSearch("gundam")
+   this.search('gundam', 'searchImages')
+   this.search('sky', 'skyImages')
+   this.search('bird', 'birdImages')
+   this.search('mountain', 'mountainImages')
   }
 
-  performSearch = (query) => {
+  search = (query, target) => {
     this.setState({loaded: false, query})
-    axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${query}&safe_search=1&per_page=24&format=json&nojsoncallback=1`)
+    axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&text=${query}&per_page=24&format=json&nojsoncallback=1`)
     .then(({data}) => {
-      console.log(data.photos.photo) /*REMOVE CONSOLE LOG*/
       this.setState({
-        imageData: data.photos.photo,
-        loaded: true
+        loaded: true,
+        [target]: data.photos.photo,
+        query
       })
     })
     .catch(error => {
-      console.log("Failed to Load Image Data", error);
+      console.log('Failed to Load Image Data', error);
     })
+  }
+
+  handleLoad = (data, title) => {
+    return this.state.loaded ? <PhotoContainer data={data} title={title} /> : <h2>Loading Images...</h2>
   }
   
   render() {
     return (
       <BrowserRouter>
         <div className="Container">
-          <Search handleSearch={this.performSearch}/>
+        <Route render={props => <Search {...props} handleSearch={this.search} /> }/>
           <Nav />
-          {this.state.loaded ? <PhotoContainer data={this.state.imageData} /> : <h2>Loading Images...</h2>}
+          <Switch>
+            <Route exact path='/'         render={() => this.handleLoad(this.state.searchImages, 'Gundam') } />
+            <Route path='/sky'            render={() => this.handleLoad(this.state.skyImages, 'Sky')}/>
+            <Route path='/bird'           render={() => this.handleLoad(this.state.birdImages, 'Bird')}/>
+            <Route path='/mountain'       render={() => this.handleLoad(this.state.mountainImages, 'Mountain')}/>
+            <Route path='/search/:query'  render={() => this.handleLoad(this.state.searchImages, this.state.query)}/>
+            <Route component={NotFound}/>
+          </Switch>
         </div>
       </BrowserRouter>
     )
