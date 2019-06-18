@@ -9,6 +9,7 @@ class Search extends Component {
 
         this.props.history.push(path)
         this.props.handleSearch(query, 'searchImages')
+        this.query.value = ''
     }
 
     render() {
