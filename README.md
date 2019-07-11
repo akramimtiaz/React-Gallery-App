@@ -1,4 +1,9 @@
+# Techdegree Project 7
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+This project involves the use of the React library to create an image gallery app. With the help of this powerful "MVC" (Model, View, Controller) library, the app will be built in the style of modern single page applications to keep it fast, modular, and in sync with current web development trends.
+
+This project aims to demonstrate competency in using React, JSX and managing state in a container component that passes data down to reusable stateless components.
 
 ## Available Scripts
 
